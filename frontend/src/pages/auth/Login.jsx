@@ -38,7 +38,6 @@ const Login = () => {
 
     setError(null)
 
-    // Login API call
     try {
       dispatch(signInStart())
 
@@ -53,13 +52,13 @@ const Login = () => {
         }
       )
 
-      // console.log(response.data)
+      localStorage.setItem("token", response.data.token)
 
-      if (response.data.role === "admin") {
-        dispatch(signInSuccess(response.data))
+      if (response.data.user.role === "admin") {
+        dispatch(signInSuccess(response.data.user))
         navigate("/admin/dashboard")
       } else {
-        dispatch(signInSuccess(response.data))
+        dispatch(signInSuccess(response.data.user))
         navigate("/user/dashboard")
       }
     } catch (error) {
@@ -77,11 +76,9 @@ const Login = () => {
     <AuthLayout>
       <div className="w-full max-w-md">
         <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
-          {/* Gradient top border */}
           <div className="h-2 bg-gradient-to-r from-blue-600 to-blue-400"></div>
 
           <div className="p-8">
-            {/* Logo and title */}
             <div className="text-center mb-8">
               <div className="flex justify-center">
                 <div className="bg-blue-100 p-3 rounded-full">
@@ -98,7 +95,6 @@ const Login = () => {
               </p>
             </div>
 
-            {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label

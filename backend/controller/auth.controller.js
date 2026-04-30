@@ -54,7 +54,7 @@ export const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body
 
-    if (!email || !password || email === "" || password === "") {
+    if (!email || !password) {
       return next(errorHandler(400, "All fields are required"))
     }
 
@@ -64,8 +64,10 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(404, "User not found!"))
     }
 
-    // compare password
-    const validPassword = bcryptjs.compareSync(password, validUser.password)
+    const validPassword = bcryptjs.compareSync(
+      password,
+      validUser.password
+    )
 
     if (!validPassword) {
       return next(errorHandler(400, "Wrong Credentials"))
@@ -73,12 +75,24 @@ export const signin = async (req, res, next) => {
 
     const token = jwt.sign(
       { id: validUser._id, role: validUser.role },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     )
 
     const { password: pass, ...rest } = validUser._doc
 
-    res.status(200).cookie("access_token", token, { httpOnly: true }).json(rest)
+    res
+      .status(200)
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      })
+      .json({
+        success: true,
+        user: rest,
+        token,
+      })
   } catch (error) {
     next(error)
   }

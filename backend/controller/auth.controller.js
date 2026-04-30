@@ -131,9 +131,7 @@ export const uploadImage = async (req, res, next) => {
       return next(errorHandler(400, "No file uploaded"))
     }
 
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${
-      req.file.filename
-    }`
+    const imageUrl = `${process.env.BASE_URL}/uploads/${req.file.filename}`;
 
     res.status(200).json({ imageUrl })
   } catch (error) {
